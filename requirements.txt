@@ -1,8 +1,9 @@
 streamlit
 openai-whisper
-torch
 torchaudio
-transformers
+transformers==4.41.2
+torch
+sentencepiece
 pyannote.audio
 reportlab
 python-docx
