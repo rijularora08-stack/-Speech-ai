@@ -1,28 +1,21 @@
-
 from transformers import pipeline
 
 
-# Load summarization model
 summarizer = pipeline(
     "summarization",
     model="facebook/bart-large-cnn"
 )
 
 
-def summarize_text(text):
-    """
-    Generate summary from transcript
-    """
+def generate_summary(text):
 
-    if not text or len(text.strip()) == 0:
+    if not text:
         return "No transcript available"
 
     try:
-        # Split long transcripts
-        max_length = 1024
         chunks = [
-            text[i:i+max_length]
-            for i in range(0, len(text), max_length)
+            text[i:i+1000]
+            for i in range(0, len(text), 1000)
         ]
 
         summaries = []
@@ -42,4 +35,4 @@ def summarize_text(text):
         return "\n\n".join(summaries)
 
     except Exception as e:
-        return f"Summarization error: {e}"
+        return f"Summary error: {e}"
