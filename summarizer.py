@@ -1,11 +1,22 @@
 from transformers import pipeline
 
 
-# Load summarization model
-summarizer_model = pipeline(
-    "summarization",
-    model="sshleifer/distilbart-cnn-12-6"
-)
+summarizer_model = None
+
+
+def load_summarizer():
+
+    global summarizer_model
+
+    if summarizer_model is None:
+
+        summarizer_model = pipeline(
+            task="text2text-generation",
+            model="google/flan-t5-small"
+        )
+
+    return summarizer_model
+
 
 
 def generate_summary(text):
@@ -14,30 +25,15 @@ def generate_summary(text):
         return "No text available"
 
 
-    # Split long transcripts
-    max_length = 1000
-
-    chunks = [
-        text[i:i+max_length]
-        for i in range(0, len(text), max_length)
-    ]
+    model = load_summarizer()
 
 
-    summaries = []
+    result = model(
+        "Summarize this text: " + text[:2000],
+        max_length=150,
+        min_length=40,
+        do_sample=False
+    )
 
 
-    for chunk in chunks:
-
-        result = summarizer_model(
-            chunk,
-            max_length=150,
-            min_length=40,
-            do_sample=False
-        )
-
-        summaries.append(
-            result[0]["summary_text"]
-        )
-
-
-    return " ".join(summaries)
+    return result[0]["generated_text"]
